@@ -17,7 +17,7 @@ genai.configure(api_key="AIzaSyAaW2MPeWEkpBAhgsLKV7kBTVHR-qnL75s")
 # System Prompt (AI ko sikhane ke liye)
 system_instruction = "Aap ek expert Islamic Scholar hain. Har sawal ka jawab Quran aur Sahih Bukhari/Muslim ke hawale se dein. Agar koi baat confirm na ho toh maafi maang lein lekin galat maloomat na dein."
 
-model = genai.GenerativeModel('gemini-1.5-flash')
+model = genai.GenerativeModel('gemini-1.5-flash-latest')
 
 # Main Interface
 st.header("Assalamu Alaikum! Aapka Deeni Sawal Kya Hai?")
