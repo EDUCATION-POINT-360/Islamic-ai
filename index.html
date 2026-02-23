@@ -3,178 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Islamic AI - Pro Edition</title>
+    <title>Islamic AI - Pro Glass</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Amiri&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap');
-        
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(-45deg, #022c22, #064e3b, #065f46, #047857);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-            height: 100vh;
-        }
-
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        /* Markdown Styling inside AI Bubbles */
-        .markdown-content h1, .markdown-content h2 { font-weight: bold; margin-bottom: 8px; color: #10b981; }
-        .markdown-content p { margin-bottom: 12px; line-height: 1.6; }
-        .markdown-content ul { list-style-type: disc; margin-left: 20px; margin-bottom: 12px; }
-        .markdown-content strong { color: #064e3b; font-weight: 700; }
-        .arabic-text { font-family: 'Amiri', serif; font-size: 1.4rem; line-height: 2.2; color: #065f46; text-align: right; border-right: 4px solid #10b981; padding-right: 15px; margin: 10px 0; background: rgba(16, 185, 129, 0.05); border-radius: 4px; }
-
-        .chat-bubble-ai {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 24px 24px 24px 4px;
-            animation: slideUp 0.3s ease-out;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .typing-dot { width: 6px; height: 6px; background: #10b981; border-radius: 50%; display: inline-block; animation: blink 1.4s infinite; margin: 0 2px; }
-        @keyframes blink { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
+        @import url('https://fonts.googleapis.com/css2?family=Amiri&family=Plus+Jakarta+Sans:wght@400;600&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #022c22; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .chat-ai { background: rgba(255, 255, 255, 0.95); border-radius: 20px 20px 20px 4px; color: #1a1a1a; }
+        .chat-user { background: #10b981; border-radius: 20px 20px 4px 20px; color: white; }
+        .arabic-text { font-family: 'Amiri', serif; font-size: 1.5rem; text-align: right; color: #065f46; display: block; margin: 10px 0; }
+        .markdown-content ul { list-style: disc; margin-left: 20px; }
     </style>
 </head>
-<body class="flex items-center justify-center p-2 md:p-6">
+<body class="p-4">
 
-    <div class="glass-panel w-full max-w-5xl h-[92vh] rounded-[2.5rem] flex flex-col overflow-hidden">
-        <div class="px-8 py-5 border-b border-white/10 flex justify-between items-center bg-black/10">
-            <div class="flex items-center gap-3">
-                <div class="bg-emerald-500 p-2.5 rounded-xl shadow-lg shadow-emerald-500/20">
-                    <i class="fa-solid fa-star-and-crescent text-white text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="text-white font-bold text-xl tracking-tight">Islamic AI <span class="text-emerald-400 font-light text-sm ml-2">PRO</span></h1>
-                    <div class="flex items-center gap-2">
-                        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                        <p class="text-white/40 text-[10px] uppercase tracking-widest">Active Reference System</p>
-                    </div>
-                </div>
-            </div>
+    <div class="glass w-full max-w-4xl h-[90vh] rounded-[2rem] flex flex-col overflow-hidden shadow-2xl">
+        <div class="p-6 border-b border-white/10 flex items-center gap-4 bg-black/20">
+            <div class="bg-emerald-500 p-3 rounded-xl"><i class="fa-solid fa-moon text-white"></i></div>
+            <h1 class="text-white text-xl font-bold">Islamic AI Pro</h1>
         </div>
 
-        <div id="chatBox" class="flex-1 overflow-y-auto p-6 md:p-10 space-y-8 scroll-smooth">
+        <div id="chatBox" class="flex-1 overflow-y-auto p-6 space-y-6">
             <div class="flex justify-start">
-                <div class="chat-bubble-ai p-5 shadow-xl max-w-[90%] md:max-w-[75%] border border-white/20">
-                    <div class="markdown-content text-gray-800">
-                        Assalamu Alaikum! Main aapka **AI Islamic Assistant** hoon. <br><br>
-                        Main aapko in cheezon mein madad de sakta hoon:
-                        <ul>
-                            <li>Quran ki ayaat ke hawale</li>
-                            <li>Hadees-e-Mubaraka ka mafhoom</li>
-                            <li>Roz-marra ke Islamic masail</li>
-                        </ul>
-                        Aap apna sawal neeche type karein.
-                    </div>
-                </div>
+                <div class="chat-ai p-4 shadow-lg">Assalamu Alaikum! Main aapki kaise madad kar sakta hoon?</div>
             </div>
         </div>
 
-        <div class="p-6 bg-black/20 border-t border-white/5">
-            <div class="relative max-w-4xl mx-auto group">
-                <input type="text" id="userInput" 
-                    onkeypress="if(event.key === 'Enter') handleSearch()"
-                    class="w-full bg-white/5 border border-white/10 rounded-2xl py-5 px-8 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:bg-white/10 transition-all shadow-2xl"
-                    placeholder="E.g. What does Quran say about parents?">
-                
-                <button onclick="handleSearch()" 
-                    class="absolute right-3 top-3 bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-bold p-3 px-6 rounded-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2 shadow-lg shadow-emerald-500/20">
-                    <span class="hidden md:inline">Ask AI</span>
+        <div class="p-6 bg-black/10">
+            <div class="relative flex gap-2">
+                <input type="text" id="userInput" onkeypress="if(event.key==='Enter') sendMessage()"
+                    class="w-full bg-white/10 border border-white/20 rounded-xl p-4 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500" 
+                    placeholder="Ask about Quran or Hadith...">
+                <button onclick="sendMessage()" class="bg-emerald-500 hover:bg-emerald-400 p-4 px-6 rounded-xl text-emerald-950 font-bold">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </div>
-            <p class="text-center text-[10px] text-white/20 mt-4 uppercase tracking-[0.2em]">Validated by Gemini 1.5 & Quran API</p>
         </div>
     </div>
 
     <script>
-        // Configure Marked to handle line breaks better
-        marked.setOptions({
-            breaks: true,
-            gfm: true
-        });
-
-        async function handleSearch() {
+        async function sendMessage() {
             const input = document.getElementById('userInput');
             const chatBox = document.getElementById('chatBox');
             const query = input.value.trim();
+            if(!query) return;
 
-            if (!query) return;
-
-            // User Message UI
-            appendMessage('user', query);
+            // User Message
+            appendMsg('user', query);
             input.value = '';
 
-            // Typing Indicator
-            const typingId = 'typing-' + Date.now();
-            appendTyping(typingId);
+            // Loading
+            const loadingId = 'load-' + Date.now();
+            appendMsg('ai', 'Thinking...', loadingId);
 
             try {
+                // LOCALHOST URL (Change this only if you host your python code online)
                 const response = await fetch('http://127.0.0.1:5000/ask', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ query: query })
                 });
-                
                 const data = await response.json();
-                document.getElementById(typingId).remove();
-                
-                // AI Response with Markdown
-                appendMessage('ai', data.answer);
-                
-            } catch (error) {
-                if(document.getElementById(typingId)) document.getElementById(typingId).remove();
-                appendMessage('ai', "⚠️ **Error:** Backend connect nahi ho raha. Check karein ke `python app.py` chalu hai.");
+                document.getElementById(loadingId).innerHTML = marked.parse(data.answer);
+            } catch (e) {
+                document.getElementById(loadingId).innerHTML = "⚠️ **Error:** Backend connect nahi ho raha. Make sure `python app.py` is running on your computer.";
             }
         }
 
-        function appendMessage(sender, text) {
+        function appendMsg(sender, text, id = null) {
             const chatBox = document.getElementById('chatBox');
             const div = document.createElement('div');
             div.className = sender === 'user' ? 'flex justify-end' : 'flex justify-start';
-            
-            const content = sender === 'user' 
-                ? `<div class="bg-emerald-600/80 text-white p-4 px-6 rounded-[20px_20px_5px_20px] shadow-lg max-w-[85%] border border-white/10">${text}</div>`
-                : `<div class="chat-bubble-ai p-6 shadow-2xl max-w-[90%] md:max-w-[80%] border border-white/20">
-                    <div class="markdown-content text-gray-800">${marked.parse(text)}</div>
-                   </div>`;
-            
-            div.innerHTML = content;
-            chatBox.appendChild(div);
-            chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
-        }
-
-        function appendTyping(id) {
-            const chatBox = document.getElementById('chatBox');
-            const div = document.createElement('div');
-            div.id = id;
-            div.className = 'flex justify-start';
-            div.innerHTML = `
-                <div class="chat-bubble-ai p-4 shadow-xl flex items-center">
-                    <div class="typing-dot"></div><div class="typing-dot" style="animation-delay:0.2s"></div><div class="typing-dot" style="animation-delay:0.4s"></div>
-                </div>`;
+            const inner = document.createElement('div');
+            inner.className = sender === 'user' ? 'chat-user p-4 max-w-[80%]' : 'chat-ai p-4 max-w-[85%] markdown-content';
+            if(id) inner.id = id;
+            inner.innerHTML = sender === 'user' ? text : marked.parse(text);
+            div.appendChild(inner);
             chatBox.appendChild(div);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
     </script>
 </body>
 </html>
+    
