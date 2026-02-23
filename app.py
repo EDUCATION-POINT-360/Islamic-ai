@@ -8,79 +8,85 @@ app = Flask(__name__)
 CORS(app)
 
 # ---------------------------------------------------------
-# 1. GEMINI CONFIGURATION
+# 1. API CONFIGURATION
 # ---------------------------------------------------------
-# Yahan apni API Key dalein (https://aistudio.google.com/)
+# Apni Keys yahan enter karein
 GEMINI_API_KEY = "AIzaSyAabkcFTfJvbS8j3oqz4qLQbdmylppdgVw"
+HADITH_API_KEY = "$2y$10$MhCtBc8HwW7yNtV8NvrNPOYPoIuhwFlJFDIUcb9agVna9Bjkwa2H6" # Aapki share ki hui key
+
 genai.configure(api_key=GEMINI_API_KEY)
 
-# Gemini Model Setup with System Instruction
+# Gemini Model Setup
 model = genai.GenerativeModel(
     model_name="gemini-1.5-flash",
     system_instruction=(
-        "You are an authentic and helpful Islamic AI Assistant. "
-        "Your goal is to provide accurate information from the Quran and Hadith. "
-        "1. Use Markdown for formatting (bold, lists, etc.). "
-        "2. Always mention Surah name and Ayah number for Quranic references. "
-        "3. If providing an Arabic verse, wrap it like this: <div class='arabic-text'>ARABIC_HERE</div> "
-        "4. Answer in a mix of Urdu and English (Roman Urdu/Hindi) that is easy to understand. "
-        "5. If you are unsure, advise the user to consult a qualified scholar."
+        "You are an Islamic Scholar AI. Answer based on Quran and the provided Hadith context. "
+        "1. Use Markdown for styling. "
+        "2. Use <div class='arabic-text'>...</div> for Arabic script. "
+        "3. Always mention the source (Surah/Ayah or Hadith Book/Chapter). "
+        "4. Language: Roman Urdu/Hindi mixed with English."
     )
 )
 
 # ---------------------------------------------------------
-# 2. QURAN API HELPER
+# 2. FETCHING LOGIC
 # ---------------------------------------------------------
-def fetch_quran_references(query):
-    """Quran API se relevant verses dhoondne ke liye"""
+
+def get_quran_context(query):
     try:
-        # English translation search for better context matching
-        search_url = f"https://api.alquran.cloud/v1/search/{query}/all/en.sahih"
-        response = requests.get(search_url).json()
+        url = f"https://api.alquran.cloud/v1/search/{query}/all/en.sahih"
+        res = requests.get(url).json()
+        if res['code'] == 200 and res['data']['count'] > 0:
+            match = res['data']['matches'][0]
+            return f"Quran: Surah {match['surah']['englishName']} ({match['numberInSurah']}) - {match['text']}"
+    except: return ""
+    return ""
+
+def get_hadith_context(query):
+    """Hadith API (hadithapi.com) integration"""
+    try:
+        # Search endpoint for Hadith API
+        url = f"https://hadithapi.com/api/hadiths?apiKey={HADITH_API_KEY}&paginate=1&hadithEnglish={query}"
+        res = requests.get(url).json()
         
-        if response['code'] == 200 and response['data']['count'] > 0:
-            matches = response['data']['matches'][:3]  # Top 3 results
-            context_text = "Relevant Quranic Verses:\n"
-            for m in matches:
-                context_text += f"- Surah {m['surah']['englishName']} ({m['numberInSurah']}): {m['text']}\n"
-            return context_text
+        if 'hadiths' in res and 'data' in res['hadiths'] and len(res['hadiths']['data']) > 0:
+            h = res['hadiths']['data'][0]
+            book = h.get('bookName', 'Hadith')
+            text = h.get('hadithEnglish', '')
+            chapter = h.get('chapterName', '')
+            return f"Hadith Source: {book} (Chapter: {chapter}) - {text}"
     except Exception as e:
-        print(f"Quran API Error: {e}")
+        print(f"Hadith API Error: {e}")
     return ""
 
 # ---------------------------------------------------------
-# 3. MAIN CHAT ROUTE
+# 3. CHAT ENDPOINT
 # ---------------------------------------------------------
+
 @app.route('/ask', methods=['POST'])
-def ask_ai():
-    data = request.json
-    user_query = data.get('query', '')
-
+def ask():
+    user_query = request.json.get('query', '')
     if not user_query:
-        return jsonify({"answer": "Please ask a question."}), 400
+        return jsonify({"answer": "Sawal likhiye..."}), 400
 
-    # Step 1: Get data from Quran API
-    quran_context = fetch_quran_references(user_query)
-
-    # Step 2: Combine query and context for Gemini
-    final_prompt = f"User Question: {user_query}\n\nContextual Data:\n{quran_context}"
+    # Parallel Data Fetching
+    q_data = get_quran_context(user_query)
+    h_data = get_hadith_context(user_query)
+    
+    combined_context = f"REFERENCES FOUND:\n{q_data}\n\n{h_data}"
 
     try:
-        # Step 3: Generate response using Gemini
-        chat_response = model.generate_content(final_prompt)
+        # Sending everything to Gemini
+        prompt = f"User Question: {user_query}\n\nReferences:\n{combined_context}\n\nProvide an authentic answer:"
+        response = model.generate_content(prompt)
         
         return jsonify({
-            "answer": chat_response.text,
-            "has_context": len(quran_context) > 0
+            "answer": response.text,
+            "debug_context": combined_context # For testing
         })
-
     except Exception as e:
-        return jsonify({"answer": f"Gemini API Error: {str(e)}"}), 500
+        return jsonify({"answer": f"System Error: {str(e)}"}), 500
 
-# ---------------------------------------------------------
-# 4. RUN SERVER
-# ---------------------------------------------------------
 if __name__ == '__main__':
-    print("Islamic AI Server is starting on http://127.0.0.1:5000")
     app.run(debug=True, port=5000)
     
