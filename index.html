@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NUR AI | By Muhammad Rizwan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.rawgit.com/mrasalam/Jameel-Noori-Nastaleeq-Web/master/style.css">
+    
+    <style>
+        :root { 
+            --emerald: #10b981; 
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #f1f5f9; }
+        
+        body { 
+            background: linear-gradient(-45deg, #f1f5f9, #e2e8f0, #f8fafc, #cbd5e1);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-main); 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            display: flex; 
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .font-urdu { font-family: 'Jameel Noori Nastaleeq', serif !important; direction: rtl; line-height: 2.2; }
+        .font-arabic { font-family: 'Amiri', serif !important; direction: rtl; line-height: 1.5; font-weight: 700; color: #0f172a; }
+
+        /* Glass Sidebar */
+        .glass-sidebar { 
+            width: 320px; 
+            background: rgba(255, 255, 255, 0.3); 
+            backdrop-filter: blur(30px); 
+            border-right: 1px solid var(--glass-border); 
+            display: none; 
+            flex-direction: column; 
+            padding: 2.5rem 1.5rem; 
+            z-index: 100;
+        }
+        @media (min-width: 1024px) { .glass-sidebar { display: flex; } }
+
+        main { flex: 1; display: flex; flex-direction: column; height: 100dvh; position: relative; z-index: 10; }
+        
+        #chat-thread { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 1.5rem; 
+            padding-bottom: 160px; 
+            scroll-behavior: smooth; 
+        }
+        #chat-thread::-webkit-scrollbar { width: 4px; }
+        #chat-thread::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.05); border-radius: 10px; }
+
+        /* Elegant Glass Cards */
+        .glass-card { 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid var(--glass-border); 
+            border-radius: 32px; 
+            margin-bottom: 2.5rem; 
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05);
+            animation: cardEnter 0.7s cubic-bezier(0.16, 1, 0.3, 1); 
+            max-width: 850px; 
+            margin-left: auto; 
+            margin-right: auto; 
+            padding: 2rem;
+        }
+
+        @keyframes cardEnter {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* User Bubble */
+        .user-bubble { 
+            background: #ffffff;
+            border: 1px solid var(--glass-border);
+            border-radius: 24px 24px 4px 24px; 
+            padding: 18px 26px; 
+            color: var(--text-main); 
+            max-width: 80%; 
+            align-self: flex-end; 
+            margin-bottom: 2rem; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+
+        /* Floating Search Area */
+        .input-area { 
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            padding: 30px 20px; 
+            background: linear-gradient(to top, #f1f5f9 60%, transparent);
+            z-index: 50; 
+        }
+
+        .search-container { 
+            background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid #ffffff; 
+            border-radius: 28px; 
+            display: flex; 
+            align-items: center; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            box-shadow: 0 15px 35px -5px rgba(0,0,0,0.08);
+            transition: all 0.4s ease; 
+        }
+
+        .search-container:focus-within { 
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px -10px rgba(0,0,0,0.12);
+            border-color: var(--emerald);
+        }
+
+        #query-input { 
+            flex: 1; 
+            padding: 1.25rem; 
+            background: transparent; 
+            outline: none; 
+            font-size: 1.3rem; 
+            color: #1e293b;
+        }
+
+        .load-more-btn { 
+            display: flex; align-items: center; gap: 8px;
+            margin: 0 auto 3rem; 
+            padding: 12px 28px; 
+            background: white; 
+            border: 1px solid var(--glass-border); 
+            border-radius: 100px; 
+            color: var(--emerald); 
+            font-size: 11px; 
+            font-weight: 800; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.03);
+            transition: 0.3s;
+        }
+        .load-more-btn:hover { background: var(--emerald); color: white; transform: scale(1.05); }
+
+        .typing::after { content: ' ●'; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <aside class="glass-sidebar">
+        <div class="flex items-center gap-4 mb-10">
+            <div class="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                <i class="fa-solid fa-bolt text-lg"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-xl text-slate-800">NUR AI</h1>
+                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Knowledge Engine</p>
+            </div>
+        </div>
+        <div class="mt-auto p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+            <p class="text-xs text-emerald-800 font-bold mb-1">Developer</p>
+            <p class="text-sm text-emerald-600">Muhammad Rizwan</p>
+        </div>
+    </aside>
+	 <main>
+        <header class="sticky top-0 w-full p-4 flex justify-between items-center bg-white/50 backdrop-blur-md border-b border-white/50 z-[110]">
+           <div class="flex items-center gap-3">
+               <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+               <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">NUR Ai <span class="hidden sm:inline">| Muhammad Rizwan</span></span>
+           </div>
+           <div class="flex gap-4 items-center">
+                <i class="fa-solid fa-kaaba text-slate-400 hover:text-emerald-500 cursor-pointer"></i>
+                <div class="w-8 h-8 rounded-full bg-slate-200"></div>
+           </div>
+        </header>
+        <div id="chat-thread" class="flex flex-col">
+            <div id="welcome" class="text-center py-24 px-6">
+                <div class="w-24 h-24 mx-auto rounded-3xl bg-white flex items-center justify-center mb-8 border border-white shadow-2xl shadow-slate-200 rotate-3 animate-bounce">
+                    <i class="fa-solid fa-book-quran text-4xl text-emerald-500"></i>
+                </div>
+                <h2 class="text-4xl font-bold text-slate-800 tracking-tight">Search the Truth</h2>
+                <p class="font-urdu text-3xl mt-6 text-slate-400">قرآن و حدیث کی روشنی میں رہنمائی</p>
+            </div>
+        </div>
+        
+        <div class="input-area fixed bottom-0 left-0 right-0 p-4 md:p-10 z-50 bg-gradient-to-t from-white/90 via-white/40 to-transparent backdrop-blur-sm pb-[max(1rem,env(safe-area-inset-bottom))]">
+    
+    <div class="search-container relative mx-auto max-w-[850px] flex items-center p-1.5
+                bg-white/40 backdrop-blur-[25px] backdrop-saturate-[180%] 
+                border border-white/70 rounded-[30px] md:rounded-[40px] 
+                shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] 
+                transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]
+                focus-within:-translate-y-3 focus-within:bg-white/80 focus-within:shadow-[0_40px_80px_-15px_rgba(16,185,129,0.3)]
+                group overflow-hidden">
+
+        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:animate-[shimmer_2.5s_infinite] pointer-events-none"></div>
+
+        <div class="absolute inset-0 border-2 border-emerald-400/0 rounded-[30px] md:rounded-[40px] group-focus-within:border-emerald-400/30 group-focus-within:animate-pulse pointer-events-none transition-all duration-500"></div>
+
+        <input type="text" id="query-input" placeholder="یہاں لکھیں..." 
+               class="flex-1 bg-transparent border-none outline-none px-5 md:px-10 py-4 md:py-7 
+                      font-urdu text-right text-xl md:text-3xl text-slate-800 placeholder-slate-400 
+                      z-10 appearance-none focus:ring-0"
+               autocomplete="off">
+
+        <button onclick="handleInquiry()" 
+                class="relative flex-shrink-0 w-12 h-12 md:w-16 md:h-16 
+                       bg-gradient-to-br from-emerald-400 to-emerald-600 
+                       text-white rounded-[22px] md:rounded-[28px] 
+                       flex items-center justify-center shadow-[0_10px_20px_rgba(16,185,129,0.4)] 
+                       transition-all duration-500 active:scale-90 
+                       hover:rotate-[8deg] hover:scale-110 z-20 overflow-hidden">
+            
+            <i class="fa-solid fa-paper-plane text-lg md:text-2xl 
+                      transition-all duration-500 
+                      group-hover:translate-x-1.5 group-hover:-translate-y-1.5"></i>
+            
+            <span class="absolute inset-0 bg-white/20 opacity-0 hover:opacity-100 transition-opacity"></span>
+        </button>
+    </div>
+
+    <div class="flex justify-center items-center gap-4 mt-6">
+        <div class="h-[1px] w-10 bg-gradient-to-r from-transparent to-slate-200"></div>
+        <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+            <p class="text-[9px] md:text-[10px] text-slate-400 uppercase tracking-[0.4em] font-bold">
+                Encrypted Connection <span class="text-emerald-500/50 mx-1">•</span> Sahih Metadata
+            </p>
+        </div>
+        <div class="h-[1px] w-10 bg-gradient-to-l from-transparent to-slate-200"></div>
+    </div>
+</div>
+
+<style>
+    /* Prevent iOS Zoom and Icon Clipping */
+    #query-input {
+        direction: rtl;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Fixed centering for FontAwesome on mobile browsers */
+    .fa-paper-plane {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        line-height: 1 !important;
+    }
+
+    /* Shimmer Animation Keyframes */
+    @keyframes shimmer {
+        0% { transform: translateX(-150%) skewX(-20deg); }
+        100% { transform: translateX(250%) skewX(-20deg); }
+    }
+
+    /* Ensure content stays visible above the bar */
+    #chat-thread {
+        padding-bottom: 150px !important;
+    }
+    @media (min-width: 768px) {
+        #chat-thread { padding-bottom: 220px !important; }
+    }
+</style>
+
+    </main>
+
+    <script>
+       // --- CONFIGURATION ---
+const HADITH_KEY = "$2y$10$MhCtBc8HwW7yNtV8NvrNPOYPoIuhwFlJFDIUcb9agVna9Bjkwa2H6";
+const GEMINI_API_KEY = "AIzaSyAabkcFTfJvbS8j3oqz4qLQbdmylppdgVw"; // Get this from Google AI Studio
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+let qMatches = [], hMatches = [], currentIdx = 0;
+
+document.getElementById('query-input').addEventListener('keypress', (e) => { if(e.key === 'Enter') handleInquiry(); });
+
+async function handleInquiry() {
+    const input = document.getElementById('query-input');
+    const val = input.value.trim();
+    if(!val) return;
+
+    document.getElementById('welcome').style.display = 'none';
+    const thread = document.getElementById('chat-thread');
+    
+    // 1. User Message
+    const userDiv = document.createElement('div');
+    userDiv.className = "user-bubble font-urdu text-2xl";
+    userDiv.innerText = val;
+    thread.appendChild(userDiv);
+    
+    thread.scrollTop = thread.scrollHeight;
+    input.value = '';
+    currentIdx = 0;
+
+    // 2. Loading State
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = "text-center font-urdu text-emerald-500 animate-pulse py-4";
+    loadingDiv.innerText = "...تلاش جاری ہے";
+    thread.appendChild(loadingDiv);
+
+    try {
+        // 3. Fetch Data from Quran/Hadith and Gemini simultaneously
+        const [qRes, hRes] = await Promise.all([
+            fetch(`https://api.alquran.cloud/v1/search/${val}/all/ur.ahmedali`).then(r => r.json()),
+            fetch(`https://hadithapi.com/api/hadiths?apiKey=${HADITH_KEY}&hadithUrdu=${val}&paginate=5`).then(r => r.json())
+        ]);
+
+        qMatches = qRes.data?.matches || [];
+        hMatches = hRes.hadiths?.data || [];
+        
+        loadingDiv.remove();
+        const oldBtn = document.querySelector('.load-more-btn');
+        if(oldBtn) oldBtn.remove();
+
+        // 4. Render Primary Result
+        await renderVerifiedResult();
+
+        // 5. Trigger Gemini for AI Synthesis (Explanation in Urdu)
+        await getGeminiExplanation(val, qMatches[0], hMatches[0]);
+
+    } catch (e) {
+        loadingDiv.remove();
+        thread.innerHTML += `<div class="p-4 text-red-400 text-center text-xs font-bold uppercase">Network error. Please try again.</div>`;
+    }
+}
+
+async function getGeminiExplanation(query, quran, hadith) {
+    const thread = document.getElementById('chat-thread');
+    const aiCard = document.createElement('div');
+    aiCard.className = "glass-card border-emerald-200 bg-emerald-50/30";
+    
+    // Construct Prompt for Gemini
+    const prompt = `User is asking: "${query}". 
+    Reference Quran: "${quran ? quran.text : 'No specific verse found'}"
+    Reference Hadith: "${hadith ? hadith.hadithUrdu : 'No specific hadith found'}"
+    Please provide a concise summary and guidance in Urdu based on these references. Keep it respectful and scholarly.`;
+
+    try {
+        const response = await fetch(GEMINI_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }]
+            })
+        });
+        const data = await response.json();
+        const aiText = data.candidates[0].content.parts[0].text;
+
+        aiCard.innerHTML = `
+            <div class="flex items-center gap-2 mb-4 text-emerald-700">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest">NUR AI Synthesis</span>
+            </div>
+            <div class="font-urdu text-xl text-right leading-relaxed text-slate-700" id="gemini_text_${Date.now()}"></div>
+        `;
+        thread.appendChild(aiCard);
+        await typeEffect(aiText, aiCard.querySelector('div:last-child'));
+    } catch (err) {
+        console.error("Gemini Error:", err);
+    }
+}
+
+// ... Keep your existing renderVerifiedResult, typeEffect, snap, and copyContent functions here ...
+
+</script>
+</body>
+    </html>
+    
+
