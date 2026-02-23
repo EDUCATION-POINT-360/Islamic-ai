@@ -10,7 +10,7 @@ with st.sidebar:
     st.info("Quran aur Sahih Hadith ki roshni mein jawab.")
 
 # 1. API Key Setup (Yahan apni sahi key dalein)
-API_KEY = "YOUR_GEMINI_API_KEY_HERE"
+API_KEY = "AIzaSyAaW2MPeWEkpBAhgsLKV7kBTVHR-qnL75s"
 genai.configure(api_key=API_KEY)
 
 # 2. Model Selection (Updated Version)
