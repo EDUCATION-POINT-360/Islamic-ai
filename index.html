@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Islamic AI - Glass Edition</title>
+    <title>Islamic AI - Pro Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Amiri&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap');
         
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(-45deg, #064e3b, #065f46, #047857, #10b981);
+            background: linear-gradient(-45deg, #022c22, #064e3b, #065f46, #047857);
             background-size: 400% 400%;
             animation: gradient 15s ease infinite;
             height: 100vh;
-            overflow: hidden;
         }
 
         @keyframes gradient {
@@ -24,90 +25,94 @@
             100% { background-position: 0% 50%; }
         }
 
-        .glass {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
+
+        /* Markdown Styling inside AI Bubbles */
+        .markdown-content h1, .markdown-content h2 { font-weight: bold; margin-bottom: 8px; color: #10b981; }
+        .markdown-content p { margin-bottom: 12px; line-height: 1.6; }
+        .markdown-content ul { list-style-type: disc; margin-left: 20px; margin-bottom: 12px; }
+        .markdown-content strong { color: #064e3b; font-weight: 700; }
+        .arabic-text { font-family: 'Amiri', serif; font-size: 1.4rem; line-height: 2.2; color: #065f46; text-align: right; border-right: 4px solid #10b981; padding-right: 15px; margin: 10px 0; background: rgba(16, 185, 129, 0.05); border-radius: 4px; }
 
         .chat-bubble-ai {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px 20px 20px 5px;
-            animation: fadeIn 0.4s ease-out;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px 24px 24px 4px;
+            animation: slideUp 0.3s ease-out;
         }
 
-        .chat-bubble-user {
-            background: rgba(16, 185, 129, 0.8);
-            color: white;
-            border-radius: 20px 20px 5px 20px;
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 5px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-        }
-
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            background: #065f46;
-            border-radius: 50%;
-            display: inline-block;
-            animation: blink 1.4s infinite both;
-        }
-        @keyframes blink { 0%, 80%, 100% { opacity: 0; } 40% { opacity: 1; } }
+        .typing-dot { width: 6px; height: 6px; background: #10b981; border-radius: 50%; display: inline-block; animation: blink 1.4s infinite; margin: 0 2px; }
+        @keyframes blink { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
     </style>
 </head>
-<body class="flex items-center justify-center p-4">
+<body class="flex items-center justify-center p-2 md:p-6">
 
-    <div class="glass w-full max-w-4xl h-[90vh] rounded-3xl flex flex-col overflow-hidden relative">
-        <div class="p-6 border-b border-white/10 flex justify-between items-center bg-white/5">
-            <div>
-                <h1 class="text-white text-2xl font-bold tracking-tight">
-                    <i class="fa-solid fa-kaaba text-emerald-400 mr-2"></i> Islamic AI
-                </h1>
-                <p class="text-emerald-200/60 text-xs uppercase tracking-widest mt-1 font-semibold">Verified References & Gemini</p>
-            </div>
-            <div class="h-10 w-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-300 border border-emerald-500/30">
-                <i class="fa-solid fa-shield-halved"></i>
-            </div>
-        </div>
-
-        <div id="chatBox" class="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
-            <div class="flex justify-start">
-                <div class="chat-bubble-ai p-4 shadow-xl max-w-[85%]">
-                    <p class="text-gray-800 leading-relaxed">Assalamu Alaikum! Main aapka digital Islamic assistant hoon. Aap Quran, Hadees ya kisi bhi Islamic masle par mujhse baat kar sakte hain.</p>
+    <div class="glass-panel w-full max-w-5xl h-[92vh] rounded-[2.5rem] flex flex-col overflow-hidden">
+        <div class="px-8 py-5 border-b border-white/10 flex justify-between items-center bg-black/10">
+            <div class="flex items-center gap-3">
+                <div class="bg-emerald-500 p-2.5 rounded-xl shadow-lg shadow-emerald-500/20">
+                    <i class="fa-solid fa-star-and-crescent text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-white font-bold text-xl tracking-tight">Islamic AI <span class="text-emerald-400 font-light text-sm ml-2">PRO</span></h1>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                        <p class="text-white/40 text-[10px] uppercase tracking-widest">Active Reference System</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="p-6 bg-white/5">
-            <div class="relative max-w-3xl mx-auto">
+        <div id="chatBox" class="flex-1 overflow-y-auto p-6 md:p-10 space-y-8 scroll-smooth">
+            <div class="flex justify-start">
+                <div class="chat-bubble-ai p-5 shadow-xl max-w-[90%] md:max-w-[75%] border border-white/20">
+                    <div class="markdown-content text-gray-800">
+                        Assalamu Alaikum! Main aapka **AI Islamic Assistant** hoon. <br><br>
+                        Main aapko in cheezon mein madad de sakta hoon:
+                        <ul>
+                            <li>Quran ki ayaat ke hawale</li>
+                            <li>Hadees-e-Mubaraka ka mafhoom</li>
+                            <li>Roz-marra ke Islamic masail</li>
+                        </ul>
+                        Aap apna sawal neeche type karein.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 bg-black/20 border-t border-white/5">
+            <div class="relative max-w-4xl mx-auto group">
                 <input type="text" id="userInput" 
-                    class="w-full bg-white/10 border border-white/20 rounded-2xl py-4 px-6 text-white placeholder-emerald-100/40 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all shadow-inner"
-                    placeholder="Ask anything (e.g., Zakat ke fawaid?)...">
+                    onkeypress="if(event.key === 'Enter') handleSearch()"
+                    class="w-full bg-white/5 border border-white/10 rounded-2xl py-5 px-8 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:bg-white/10 transition-all shadow-2xl"
+                    placeholder="E.g. What does Quran say about parents?">
                 
                 <button onclick="handleSearch()" 
-                    class="absolute right-3 top-2.5 bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-bold p-2 px-5 rounded-xl transition-all shadow-lg active:scale-95">
+                    class="absolute right-3 top-3 bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-bold p-3 px-6 rounded-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2 shadow-lg shadow-emerald-500/20">
+                    <span class="hidden md:inline">Ask AI</span>
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </div>
-            <p class="text-center text-[10px] text-white/30 mt-4 uppercase tracking-tighter">Powered by Gemini AI • Quran & Hadith APIs</p>
+            <p class="text-center text-[10px] text-white/20 mt-4 uppercase tracking-[0.2em]">Validated by Gemini 1.5 & Quran API</p>
         </div>
     </div>
 
     <script>
+        // Configure Marked to handle line breaks better
+        marked.setOptions({
+            breaks: true,
+            gfm: true
+        });
+
         async function handleSearch() {
             const input = document.getElementById('userInput');
             const chatBox = document.getElementById('chatBox');
@@ -115,16 +120,15 @@
 
             if (!query) return;
 
-            // Display User Message
+            // User Message UI
             appendMessage('user', query);
             input.value = '';
 
-            // Display Typing Indicator
+            // Typing Indicator
             const typingId = 'typing-' + Date.now();
             appendTyping(typingId);
 
             try {
-                // Backend API call
                 const response = await fetch('http://127.0.0.1:5000/ask', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -132,14 +136,14 @@
                 });
                 
                 const data = await response.json();
-                
-                // Remove typing and show response
                 document.getElementById(typingId).remove();
+                
+                // AI Response with Markdown
                 appendMessage('ai', data.answer);
                 
             } catch (error) {
-                document.getElementById(typingId).remove();
-                appendMessage('ai', "Error: Make sure your Python backend is running!");
+                if(document.getElementById(typingId)) document.getElementById(typingId).remove();
+                appendMessage('ai', "⚠️ **Error:** Backend connect nahi ho raha. Check karein ke `python app.py` chalu hai.");
             }
         }
 
@@ -149,8 +153,10 @@
             div.className = sender === 'user' ? 'flex justify-end' : 'flex justify-start';
             
             const content = sender === 'user' 
-                ? `<div class="chat-bubble-user p-4 shadow-lg max-w-[85%]">${text}</div>`
-                : `<div class="chat-bubble-ai p-4 shadow-xl max-w-[85%] text-gray-800">${text.replace(/\n/g, '<br>')}</div>`;
+                ? `<div class="bg-emerald-600/80 text-white p-4 px-6 rounded-[20px_20px_5px_20px] shadow-lg max-w-[85%] border border-white/10">${text}</div>`
+                : `<div class="chat-bubble-ai p-6 shadow-2xl max-w-[90%] md:max-w-[80%] border border-white/20">
+                    <div class="markdown-content text-gray-800">${marked.parse(text)}</div>
+                   </div>`;
             
             div.innerHTML = content;
             chatBox.appendChild(div);
@@ -163,12 +169,9 @@
             div.id = id;
             div.className = 'flex justify-start';
             div.innerHTML = `
-                <div class="chat-bubble-ai p-4 shadow-xl">
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot" style="animation-delay: 0.2s"></div>
-                    <div class="typing-dot" style="animation-delay: 0.4s"></div>
-                </div>
-            `;
+                <div class="chat-bubble-ai p-4 shadow-xl flex items-center">
+                    <div class="typing-dot"></div><div class="typing-dot" style="animation-delay:0.2s"></div><div class="typing-dot" style="animation-delay:0.4s"></div>
+                </div>`;
             chatBox.appendChild(div);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
